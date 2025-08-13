@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QRCode</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+  </head>
+  <body class="bg-gray-300 p-5 flex flex-col items-center">
+    <div class="font-bold mb-5 text-2xl">Your QR Code</div>
+    <img id="image" src="data:image/png;base64, {{img_str}}" alt="" />
+    <div class="my-5 text-blue-500 font-bold">Generate another QR Code</div>
+    <div class="flex gap-3">
+      <button
+        onclick="download()"
+        class="bg-blue-500 text-white font-bold py-2 px-5 rounded"
+      >
+        <i class="fa-solid fa-download mr-2"></i>Download QR Code
+      </button>
+      <button
+        onclick="share()"
+        class="bg-green-700 text-white font-bold py-2 px-5 rounded"
+      >
+        <i class="fa-solid fa-share mr-2"></i>Share QR Code
+      </button>
+    </div>
+    <script>
+      download = () => {
+        const img = document.getElementById("image");
+        const url = img.src;
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "qrcode.png";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      };
+
+      share = () => {
+        const img = document.getElementById("image");
+        const url = img.src;
+        fetch(url)
+          .then((res) => res.blob())
+          .then((blob) => {
+            const file = new File([blob], "qrcode.png", { type: "image/png" });
+            navigator.share({
+              title: "QR Code",
+              text: "Check out this QR Code",
+              files: [file],
+            });
+          });
+      };
+    </script>
+  </body>
+</html>
